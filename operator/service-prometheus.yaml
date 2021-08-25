@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    app: prometheus
+    prometheus: service-prometheus
+  name: service-prometheus
+  namespace: default
+spec:
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: default
+      port: web
+  baseImage: prom/prometheus:v2.19.2
+  logLevel: info
+  paused: false
+  replicas: 1
+  retention: 2d
+  routePrefix: /
+  ruleSelector:
+    matchLabels:
+      prometheus: service-prometheus
+      role: alert-rules
+  serviceAccountName: prometheus-k8s
+  serviceMonitorSelector:
+    matchExpressions:
+    - key: serviceapp
+      operator: Exists
+
